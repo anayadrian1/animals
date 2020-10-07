@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import edu.cnm.deepdive.animals.BuildConfig;
 import edu.cnm.deepdive.animals.R;
 import edu.cnm.deepdive.animals.model.Animal;
 import edu.cnm.deepdive.animals.model.ApiKey;
@@ -65,7 +66,7 @@ public class ImageFragment extends Fragment {
       Gson gson = new GsonBuilder()
           .create();
       Retrofit retrofit = new Retrofit.Builder()
-          .baseUrl("https://us-central1-apis-4674e.cloudfunctions.net/")
+          .baseUrl(BuildConfig.BASE_URL)
           .addConverterFactory(GsonConverterFactory.create(gson))
           .build();
       animalService = retrofit.create(AnimalService.class);
@@ -93,7 +94,7 @@ public class ImageFragment extends Fragment {
     @Override
     protected void onPostExecute(List<Animal> animals) {
 
-      final String imageUrl = animals.get(0).getImageUrl();
+      final String imageUrl = animals.get(2).getImageUrl();
 
       getActivity().runOnUiThread(new Runnable() {
         @Override
