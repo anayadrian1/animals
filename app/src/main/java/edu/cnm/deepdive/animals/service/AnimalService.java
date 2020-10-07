@@ -1,6 +1,6 @@
 package edu.cnm.deepdive.animals.service;
 
-import edu.cnm.deepdive.animals.model.Animals;
+import edu.cnm.deepdive.animals.model.Animal;
 import edu.cnm.deepdive.animals.model.ApiKey;
 import java.util.List;
 import retrofit2.Call;
@@ -16,5 +16,5 @@ public interface AnimalService {
 
   @FormUrlEncoded
   @POST("getAnimals")
-  Call<List<Animals>> getAnimals(@Field("key") String key);
+  Call<List<Animal>> getAnimals(@Field("key") String key);
 }
