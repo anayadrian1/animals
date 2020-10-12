@@ -49,7 +49,7 @@ public class ImageFragment extends Fragment implements OnItemSelectedListener {
     animalViewModel.getAnimals().observe(getViewLifecycleOwner(), (animals) -> {
       this.animals = animals;
       ArrayAdapter<Animal> adapter = new ArrayAdapter<>(
-          this.getContext(), android.R.layout.simple_spinner_item, animals);
+          this.getContext(), R.layout.custom_spinner_item, animals);
       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
       spinner.setAdapter(adapter);
     });
