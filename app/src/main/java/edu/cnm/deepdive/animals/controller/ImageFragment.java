@@ -11,12 +11,15 @@ import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import com.squareup.picasso.Picasso;
 import edu.cnm.deepdive.animals.R;
 import edu.cnm.deepdive.animals.model.Animal;
 import edu.cnm.deepdive.animals.viewmodel.AnimalViewModel;
@@ -24,11 +27,12 @@ import java.util.List;
 
 public class ImageFragment extends Fragment implements OnItemSelectedListener {
 
-  private WebView contentView;
+  private ImageView imageView;
   private AnimalViewModel animalViewModel;
   private Spinner spinner;
   private List<Animal> animals;
   private Toolbar toolbar;
+  private int selectedAnimal = -1;
 
   @Override
   public void onViewCreated(@NonNull View view,
@@ -42,14 +46,35 @@ public class ImageFragment extends Fragment implements OnItemSelectedListener {
           this.getContext(), R.layout.custom_spinner_item, animals);
       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
       spinner.setAdapter(adapter);
+
+      if (selectedAnimal >= 0) {
+        updateSelection();
+      }
+
     });
+
+    animalViewModel.getSelectedItem().observe(getViewLifecycleOwner(), (item) -> {
+      if (item != selectedAnimal) {
+        selectedAnimal = item;
+        if(animals != null) {
+          updateSelection();
+        }
+      }
+    });
+  }
+
+
+  private void updateSelection() {
+    spinner.setSelection(selectedAnimal);
+    Picasso.get().load(animals.get(selectedAnimal).getImageUrl())
+        .into(imageView);
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View root = inflater.inflate(R.layout.fragment_image, container, false);
-    setupWebView(root);
+    imageView = root.findViewById(R.id.image_view);
     toolbar = root.findViewById(R.id.toolbar);
     toolbar.setTitle(R.string.app_name);
     spinner = root.findViewById(R.id.animals_spinner);
@@ -58,26 +83,9 @@ public class ImageFragment extends Fragment implements OnItemSelectedListener {
     return root;
   }
 
-  private void setupWebView(View root) {
-    contentView = root.findViewById(R.id.content_view);
-    contentView.setWebViewClient(new WebViewClient() {
-      @Override
-      public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-        return false;
-      }
-    });
-    WebSettings settings = contentView.getSettings();
-    settings.setJavaScriptEnabled(true);
-    settings.setSupportZoom(true);
-    settings.setBuiltInZoomControls(true);
-    settings.setDisplayZoomControls(false);
-    settings.setUseWideViewPort(true);
-    settings.setLoadWithOverviewMode(true);
-  }
-
   @Override
   public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-    contentView.loadUrl(animals.get(pos).getImageUrl());
+    animalViewModel.select(pos);
   }
 
   @Override

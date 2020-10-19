@@ -24,15 +24,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AnimalViewModel  extends AndroidViewModel {
 
   private final MutableLiveData<List<Animal>> animals;
+  private final MutableLiveData<Integer> selectedItem;
   private final MutableLiveData<Throwable> throwable;
   private final AnimalService animalService;
 
   public AnimalViewModel(@NonNull Application application) {
     super(application);
     animals = new MutableLiveData<>();
+    selectedItem = new MutableLiveData<>();
     throwable = new MutableLiveData<>();
     animalService = AnimalService.getInstance();
     loadAnimals();
+  }
+
+  public void select(int index) {
+    selectedItem.setValue(index);
+  }
+
+  public LiveData<Integer> getSelectedItem() {
+    return selectedItem;
   }
 
   public LiveData<List<Animal>> getAnimals() {
